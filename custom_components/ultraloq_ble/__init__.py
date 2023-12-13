@@ -20,9 +20,6 @@ PLATFORMS: list[Platform] = [
     Platform.SWITCH,
 ]
 
-# async def async_get_options_flow(config_entry):
-#     return UltraloqBLEFlowHandler(config_entry)
-
 # https://developers.home-assistant.io/docs/config_entries_index/#setting-up-an-entry
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
