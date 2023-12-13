@@ -9,13 +9,8 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
-from homeassistant.exceptions import ConfigEntryAuthFailed
+from utecio.client import UtecClient
 
-from .api import (
-    IntegrationBlueprintApiClient,
-    IntegrationBlueprintApiClientAuthenticationError,
-    IntegrationBlueprintApiClientError,
-)
 from .const import DOMAIN, LOGGER
 
 
@@ -28,7 +23,7 @@ class UltraloqBleDataUpdateCoordinator(DataUpdateCoordinator):
     def __init__(
         self,
         hass: HomeAssistant,
-        client: IntegrationBlueprintApiClient,
+        client: UtecClient,
     ) -> None:
         """Initialize."""
         self.client = client
@@ -42,8 +37,7 @@ class UltraloqBleDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Update data via library."""
         try:
-            return await self.client.async_get_data()
-        except IntegrationBlueprintApiClientAuthenticationError as exception:
-            raise ConfigEntryAuthFailed(exception) from exception
-        except IntegrationBlueprintApiClientError as exception:
-            raise UpdateFailed(exception) from exception
+            await self.client.sync()
+            return await self.client.devices
+        except Exception as e:
+            raise UpdateFailed(e) from e

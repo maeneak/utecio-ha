@@ -6,12 +6,12 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
-from utecio import UtecClient
+from utecio.client import UtecClient
 
 from .const import DOMAIN, LOGGER
 
 
-class UltraloqBLEFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class UltraloqFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Ultraloq BLE."""
 
     VERSION = 1

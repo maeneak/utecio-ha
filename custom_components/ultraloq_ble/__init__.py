@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from utecio import UtecClient
+from utecio.client import UtecClient
 
 from .const import DOMAIN
 from .coordinator import UltraloqBleDataUpdateCoordinator
