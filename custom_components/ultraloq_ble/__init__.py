@@ -9,11 +9,12 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from utecio.client import UtecClient
+from utecio import UtecClient
 
 from .api import IntegrationBlueprintApiClient
 from .const import DOMAIN
-from .coordinator import BlueprintDataUpdateCoordinator
+from .coordinator import UltraloqBleDataUpdateCoordinator
+from .config_flow import UltraloqBLEFlowHandler
 
 PLATFORMS: list[Platform] = [
     Platform.SENSOR,
@@ -21,12 +22,14 @@ PLATFORMS: list[Platform] = [
     Platform.SWITCH,
 ]
 
+# async def async_get_options_flow(config_entry):
+#     return UltraloqBLEFlowHandler(config_entry)
 
 # https://developers.home-assistant.io/docs/config_entries_index/#setting-up-an-entry
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = coordinator = BlueprintDataUpdateCoordinator(
+    hass.data[DOMAIN][entry.entry_id] = coordinator = UltraloqBleDataUpdateCoordinator(
         hass=hass,
         client=UtecClient(
             email=entry.data[CONF_USERNAME],

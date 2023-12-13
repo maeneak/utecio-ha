@@ -2,7 +2,7 @@
   "domain": "ultraloq_ble",
   "name": "Ultraloq BLE",
   "codeowners": [
-    "@ludeeus"
+    "@maeneak"
   ],
   "config_flow": true,
   "documentation": "https://github.com/maeneak/ultraloq_ble",
