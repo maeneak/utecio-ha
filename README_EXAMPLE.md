@@ -41,6 +41,7 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [utecio]: https://github.com/maeneak/utecio
 [buymecoffee]: https://www.buymeacoffee.com/maeneak
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/ludeeus/integration_blueprint.svg?style=for-the-badge
 [discord]: https://discord.com/channels/1128393891788361919/1128393892295876640
 [discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
 [exampleimg]: example.png
