@@ -1,0 +1,12 @@
+{
+  "domain": "ultraloq_ble",
+  "name": "Ultraloq BLE",
+  "codeowners": [
+    "@ludeeus"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/maeneak/ultraloq_ble",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/maeneak/ultraloq_ble/issues",
+  "version": "0.0.0"
+}
