@@ -15,9 +15,7 @@ from .const import DOMAIN
 from .coordinator import UltraloqBleDataUpdateCoordinator
 
 PLATFORMS: list[Platform] = [
-    Platform.SENSOR,
-    Platform.BINARY_SENSOR,
-    Platform.SWITCH,
+    Platform.LOCK
 ]
 
 # https://developers.home-assistant.io/docs/config_entries_index/#setting-up-an-entry
