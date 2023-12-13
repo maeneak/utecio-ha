@@ -6,6 +6,7 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from utecio.client import UtecClient
 
 from .api import (
     IntegrationBlueprintApiClient,
@@ -16,8 +17,8 @@ from .api import (
 from .const import DOMAIN, LOGGER
 
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Blueprint."""
+class UltraloqBLEFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config flow for Ultraloq BLE."""
 
     VERSION = 1
 
@@ -33,15 +34,10 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
                 )
-            except IntegrationBlueprintApiClientAuthenticationError as exception:
-                LOGGER.warning(exception)
+            except Exception as e:
+                LOGGER.warning(e)
                 _errors["base"] = "auth"
-            except IntegrationBlueprintApiClientCommunicationError as exception:
-                LOGGER.error(exception)
-                _errors["base"] = "connection"
-            except IntegrationBlueprintApiClientError as exception:
-                LOGGER.exception(exception)
-                _errors["base"] = "unknown"
+
             else:
                 return self.async_create_entry(
                     title=user_input[CONF_USERNAME],
@@ -72,9 +68,9 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _test_credentials(self, username: str, password: str) -> None:
         """Validate credentials."""
-        client = IntegrationBlueprintApiClient(
+        client = UtecClient(
             username=username,
             password=password,
             session=async_create_clientsession(self.hass),
         )
-        await client.async_get_data()
+        await client.login()
