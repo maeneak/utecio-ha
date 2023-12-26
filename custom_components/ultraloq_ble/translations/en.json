@@ -1,18 +1,40 @@
 {
     "config": {
-        "step": {
-            "user": {
-                "description": "If you need help with the configuration have a look here: https://github.com/maeneak/ultraloq_ble",
-                "data": {
-                    "username": "Username",
-                    "password": "Password"
-                }
-            }
+        "abort": {
+            "already_configured": "Utec account is already configured",
+            "reauth_successful": "Re-authentication was successful"
         },
         "error": {
-            "auth": "Username/Password is wrong.",
-            "connection": "Unable to connect to the server.",
-            "unknown": "Unknown error occurred."
+            "cannot_connect": "Failed to connect",
+            "incorrect_email_pass": "Invalid Email and/or Password for selected account",
+            "invalid_auth": "Invalid authentication. Are your credentials correct?",
+            "no_pets": "No locks found on account"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "email": "Email",
+                    "password": "Password"
+                },
+                "title": "Fill in your Utec account credentials"
+            },
+            "reauth_confirm": {
+                "data": {
+                    "email": "Email",
+                    "password": "Password"
+                },
+                "title": "Reauthenticate with your Utec account credentials"
+            }
+        },
+        "title": "Utec Account"
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "zone_method": "Use zones defined by:"
+                }
+            }
         }
     }
 }

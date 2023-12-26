@@ -1,9 +1,31 @@
-"""Constants for ultraloq_ble."""
-from logging import Logger, getLogger
+""" Constants for Whistle """
 
-LOGGER: Logger = getLogger(__package__)
+import asyncio
+import logging
 
-NAME = "Ultraloq BLE"
+from aiohttp.client_exceptions import ClientConnectionError
+
+from homeassistant.const import Platform
+
+LOGGER = logging.getLogger(__package__)
+
+DEFAULT_SCAN_INTERVAL = 60
 DOMAIN = "ultraloq_ble"
-VERSION = "0.0.0"
-ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
+PLATFORMS = [
+    Platform.LOCK
+]
+
+DEFAULT_NAME = "Ultraloq Bluetooth"
+TIMEOUT = 20
+
+UL_ERRORS = (
+    asyncio.TimeoutError,
+    ClientConnectionError
+)
+
+CONF_ZONE_METHOD = "zone_method"
+DEFAULT_ZONE_METHOD = "Utec"
+ZONE_METHODS = ["Utec", "Home Assistant"]
+
+UPDATE_LISTENER = "update_listener"
+UL_COORDINATOR = "ul_coordinator"

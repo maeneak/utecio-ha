@@ -1,12 +1,18 @@
 {
   "domain": "ultraloq_ble",
-  "name": "Ultraloq BLE",
+  "name": "Ultraloq Bluetooth",
   "codeowners": [
     "@maeneak"
   ],
   "config_flow": true,
-  "documentation": "https://github.com/maeneak/ultraloq_ble",
+  "dependencies": [],
+  "documentation": "https://github.com/maeneak/utecio-ha",
+  "integration_type": "hub",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/maeneak/ultraloq_ble/issues",
-  "version": "0.0.0"
+  "issue_tracker": "https://github.com/maeneak/utecio-ha/issues",
+  "requirements": [
+    "utecio @ git+https://github.com/maeneak/utecio@ha",
+    "async-timeout>=3.0.0"
+  ],
+  "version": "0.0.1"
 }

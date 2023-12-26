@@ -1,0 +1,40 @@
+{
+  "config": {
+    "title": "Utec Account",
+    "step": {
+      "user": {
+        "title": "Fill in your Utec account credentials",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate with your Utec account credentials",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "incorrect_email_pass": "Invalid Email and/or Password for selected account",
+      "invalid_auth": "Invalid authentication. Are your credentials correct?",
+      "no_pets": "No locks found on account"
+    },
+    "abort": {
+      "already_configured": "Utec account is already configured",
+      "reauth_successful": "Re-authentication was successful"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "zone_method": "Use zones defined by:"
+        }
+      }
+    }
+  }
+}

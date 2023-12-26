@@ -1,43 +1,48 @@
-"""DataUpdateCoordinator for ultraloq_ble."""
+"""DataUpdateCoordinator for the Ultraloq integration."""
 from __future__ import annotations
 
 from datetime import timedelta
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-    UpdateFailed,
-)
+from utecio.ble.lock import UtecBleLock
 from utecio.client import UtecClient
 
-from .const import DOMAIN, LOGGER
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, LOGGER
 
 
-# https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
-class UltraloqBleDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching data from the API."""
+class UltraloqDataUpdateCoordinator(DataUpdateCoordinator):
+    """Ultraloq Data Update Coordinator."""
 
-    config_entry: ConfigEntry
+    data: list[UtecBleLock]
 
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        client: UtecClient,
-    ) -> None:
-        """Initialize."""
-        self.client = client
+    def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
+        """Initialize the Ultraloq coordinator."""
+
+        self.client = UtecClient(
+            entry.data[CONF_EMAIL],
+            entry.data[CONF_PASSWORD],
+            session=async_get_clientsession(hass),
+        )
         super().__init__(
-            hass=hass,
-            logger=LOGGER,
+            hass,
+            LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(minutes=5),
+            update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )
 
-    async def _async_update_data(self):
-        """Update data via library."""
+    async def _async_update_data(self) -> list[UtecBleLock]:
+        """Fetch data from Utec."""
+
         try:
-            await self.client.sync()
-            return await self.client.devices
-        except Exception as e:
-            raise UpdateFailed(e) from e
+            data = await self.client.get_all_devices()
+        except Exception as error:
+            raise UpdateFailed(error) from error
+        if not data:
+            raise UpdateFailed("No Locks found")
+        return data
