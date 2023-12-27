@@ -71,17 +71,12 @@ class UtecLock(CoordinatorEntity, LockEntity):
 
         return str(self.lock.name)
 
-    @property
-    def is_locked(self):
-        """Return true if lock is locked."""
-        return self.lock.lock_status == 1
-
     async def async_lock(self, **kwargs):
         """Lock the lock."""
         await self.lock.lock()
-        self.lock.lock_status = 1
+        self._attr_is_locked = True
 
     async def async_unlock(self, **kwargs):
         """Unlock the lock."""
         await self.lock.unlock()
-        self.lock.lock_status = 0
+        self._attr_is_locked = False

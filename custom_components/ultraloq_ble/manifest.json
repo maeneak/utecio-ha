@@ -5,7 +5,7 @@
     "@maeneak"
   ],
   "config_flow": true,
-  "dependencies": [],
+  "dependencies": ["bluetooth_adapters"],
   "documentation": "https://github.com/maeneak/utecio-ha",
   "integration_type": "hub",
   "iot_class": "local_polling",
