@@ -1,7 +1,7 @@
 """Utilities for Ultraloq Bluetooth Integration."""
 from __future__ import annotations
 
-from utecio.client import UtecClient
+from utecio.web.client import UtecClient
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession

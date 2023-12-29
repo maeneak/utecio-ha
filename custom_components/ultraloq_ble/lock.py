@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from bleak.backends.device import BLEDevice
 from utecio.ble.lock import UtecBleLock
 
 from homeassistant.components import bluetooth
@@ -10,12 +11,11 @@ from homeassistant.components.lock import LockEntity, LockEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_LOCKED, STATE_LOCKING, STATE_UNLOCKED
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, UL_COORDINATOR
-from .coordinator import UltraloqDataUpdateCoordinator
+from .const import DOMAIN, UTEC_LOCKDATA
 
 
 async def async_setup_entry(
@@ -23,35 +23,30 @@ async def async_setup_entry(
 ) -> None:
     """Set Up Ultraloq Lock Entities."""
 
-    coordinator: UltraloqDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id][
-        UL_COORDINATOR
-    ]
+    data: list[UtecBleLock] = hass.data[DOMAIN][entry.entry_id][UTEC_LOCKDATA]
 
     entities = []
 
-    for lock in coordinator.data:
-        add = UtecLock(coordinator, lock)
+    for lock in data:
+        add = UtecLock(lock)
         entities.append(add)
 
     async_add_entities(entities)
 
 
-class UtecLock(CoordinatorEntity, LockEntity):
+class UtecLock(LockEntity):
     """Representation of Ultraloq Device."""
 
-    def __init__(self, coordinator, lock: UtecBleLock) -> None:
+    def __init__(self, lock: UtecBleLock) -> None:
         """Initialize the Lock."""
-        super().__init__(coordinator)
         self.lock: UtecBleLock = lock
-        mac_uuid = bluetooth.async_ble_device_from_address(
-            coordinator.hass, self.lock.mac_uuid
-        )
-        self.lock.mac_uuid = mac_uuid if mac_uuid else self.lock.mac_uuid
-        if self.lock.wurx_uuid:
-            wurx_uuid = bluetooth.async_ble_device_from_address(
-                coordinator.hass, self.lock.wurx_uuid
-            )
-            self.lock.wurx_uuid = wurx_uuid if wurx_uuid else self.lock.wurx_uuid
+        self._attr_is_locked = True
+        self.lock.async_device_callback = self.async_device_callback
+
+    async def async_device_callback(self, device: str) -> BLEDevice | Any:
+        """Return BLEDevice from HA bleak instance if available."""
+        ble_device = bluetooth.async_ble_device_from_address(self.hass, device)
+        return ble_device if ble_device else device
 
     # @property
     # def device_info(self) -> dict[str, Any]:
@@ -63,13 +58,18 @@ class UtecLock(CoordinatorEntity, LockEntity):
     def unique_id(self) -> str:
         """Sets unique ID for this entity."""
 
-        return str(self.lock.mac_uuid) + "_" + self.lock.model
+        return "ul_" + device_registry.format_mac(self.lock.mac_uuid)
 
     @property
     def name(self) -> str:
         """Return name of the entity."""
 
-        return str(self.lock.name)
+        return self.lock.name
+
+    async def async_update(self, **kwargs):
+        """Update the lock."""
+        await self.lock.update()
+        self._attr_is_locked = self.lock.lock_status == 1
 
     async def async_lock(self, **kwargs):
         """Lock the lock."""
