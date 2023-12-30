@@ -69,7 +69,7 @@ class UtecLock(LockEntity):
     async def async_update(self, **kwargs):
         """Update the lock."""
         await self.lock.update()
-        self._attr_is_locked = self.lock.lock_status == 1
+        self._attr_is_locked = self.lock.lock_status != 0
 
     async def async_lock(self, **kwargs):
         """Lock the lock."""
