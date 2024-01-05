@@ -16,3 +16,9 @@ coverage.xml
 config/*
 !config/configuration.yaml
 core
+.HA_VERSION
+automations.yaml
+configuration.yaml
+scenes.yaml
+scripts.yaml
+secrets.yaml
