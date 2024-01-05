@@ -22,3 +22,8 @@ configuration.yaml
 scenes.yaml
 scripts.yaml
 secrets.yaml
+deps
+tts
+home-assistant*
+.storage
+blueprints

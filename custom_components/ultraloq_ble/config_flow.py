@@ -11,14 +11,9 @@ from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
+from homeassistant.const import CONF_SCAN_INTERVAL
 
-from .const import (
-    CONF_ZONE_METHOD,
-    DEFAULT_NAME,
-    DEFAULT_ZONE_METHOD,
-    DOMAIN,
-    ZONE_METHODS,
-)
+from .const import DEFAULT_NAME, DEFAULT_SCAN_INTERVAL, DOMAIN
 from .util import NoDevicesError, async_validate_api, InvalidCredentials
 
 DATA_SCHEMA = vol.Schema(
@@ -113,7 +108,7 @@ class UltraloqConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(
                     title=DEFAULT_NAME,
                     data={CONF_EMAIL: email, CONF_PASSWORD: password},
-                    options={CONF_ZONE_METHOD: DEFAULT_ZONE_METHOD},
+                    options={CONF_SCAN_INTERVAL: DEFAULT_SCAN_INTERVAL},
                 )
 
         return self.async_show_form(
@@ -137,11 +132,11 @@ class UltraloqOptionsFlowHandler(config_entries.OptionsFlow):
 
         options = {
             vol.Optional(
-                CONF_ZONE_METHOD,
+                CONF_SCAN_INTERVAL,
                 default=self.config_entry.options.get(
-                    CONF_ZONE_METHOD, DEFAULT_ZONE_METHOD
+                    CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
                 ),
-            ): vol.In(ZONE_METHODS)
+            ): int
         }
 
         return self.async_show_form(step_id="init", data_schema=vol.Schema(options))

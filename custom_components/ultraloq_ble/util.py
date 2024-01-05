@@ -17,6 +17,7 @@ async def async_validate_api(hass: HomeAssistant, email: str, password: str) -> 
     )
 
     try:
+        await client._fetch_token()
         await client.login()
     except UL_ERRORS as err:
         LOGGER.error(f"Failed to get information from UTEC servers: {err}")
