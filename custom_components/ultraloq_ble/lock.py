@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 from typing import Any
+from datetime import timedelta
 
 from bleak.backends.device import BLEDevice
-from utecio.ble.lock import UtecBleLock
+from utecio.lock import UtecBleLock
+from utecio.enums import ULLockStatus
+from .const import DEFAULT_SCAN_INTERVAL
 
 from homeassistant.components import bluetooth
 from homeassistant.components.lock import LockEntity, LockEntityFeature
@@ -12,10 +15,11 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_LOCKED, STATE_LOCKING, STATE_UNLOCKED
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry
-from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, UTEC_LOCKDATA
+
+SCAN_INTERVAL = timedelta(seconds=DEFAULT_SCAN_INTERVAL)
 
 
 async def async_setup_entry(
@@ -69,14 +73,16 @@ class UtecLock(LockEntity):
     async def async_update(self, **kwargs):
         """Update the lock."""
         await self.lock.update()
-        self._attr_is_locked = self.lock.lock_status != 0
+        self._attr_is_locked = self.lock.lock_status = ULLockStatus.LOCKED
 
     async def async_lock(self, **kwargs):
         """Lock the lock."""
-        await self.lock.lock()
         self._attr_is_locked = True
+        self.schedule_update_ha_state(force_refresh=False)
+        await self.lock.lock()
 
     async def async_unlock(self, **kwargs):
         """Unlock the lock."""
-        await self.lock.unlock()
         self._attr_is_locked = False
+        self.schedule_update_ha_state(force_refresh=False)
+        await self.lock.unlock()

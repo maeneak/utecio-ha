@@ -19,7 +19,7 @@ from .const import (
     DOMAIN,
     ZONE_METHODS,
 )
-from .util import NoLocksError, async_validate_api
+from .util import NoDevicesError, async_validate_api, InvalidCredentials
 
 DATA_SCHEMA = vol.Schema(
     {
@@ -64,9 +64,9 @@ class UltraloqConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 await async_validate_api(self.hass, email, password)
             except ConnectionError:
                 errors["base"] = "cannot_connect"
-            except NoLocksError:
-                errors["base"] = "no_locka"
-            except Exception:
+            except NoDevicesError:
+                errors["base"] = "no_locks"
+            except InvalidCredentials:
                 errors["base"] = "invalid_auth"
             else:
                 assert self.entry is not None
@@ -102,9 +102,9 @@ class UltraloqConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 await async_validate_api(self.hass, email, password)
             except ConnectionError:
                 errors["base"] = "cannot_connect"
-            except NoLocksError:
+            except NoDevicesError:
                 errors["base"] = "no_locks"
-            except Exception:
+            except InvalidCredentials:
                 errors["base"] = "invalid_auth"
             else:
                 await self.async_set_unique_id(email)

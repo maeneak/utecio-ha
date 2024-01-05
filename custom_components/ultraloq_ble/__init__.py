@@ -1,7 +1,7 @@
 """Ultraloq Bluetooth Component."""
 from __future__ import annotations
 
-from utecio.web.client import UtecClient
+from utecio.client import UtecClient
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
