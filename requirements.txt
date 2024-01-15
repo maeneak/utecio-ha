@@ -2,5 +2,5 @@ utecio @ git+https://github.com/maeneak/utecio@ha
 colorlog==6.8.0
 homeassistant==2023.12.0
 pip>=21.0,<23.4
-ruff==0.1.7
+ruff==0.1.13
 
