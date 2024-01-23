@@ -32,7 +32,7 @@
     "step": {
       "init": {
         "data": {
-          "scan_interval": "Scan Interval (seconds):"
+          "scan_interval": "Poll Interval (seconds):"
         }
       }
     }

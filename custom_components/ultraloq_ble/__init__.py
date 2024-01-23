@@ -9,8 +9,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
-    CONF_ZONE_METHOD,
-    DEFAULT_ZONE_METHOD,
     DOMAIN,
     LOGGER,
     PLATFORMS,
