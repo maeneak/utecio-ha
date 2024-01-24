@@ -1,5 +1,4 @@
-""" Constants for Whistle """
-
+"""Constants for Ultraloq Bluetooth."""
 import asyncio
 import logging
 
