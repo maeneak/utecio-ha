@@ -58,7 +58,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 #             email = entry.data[CONF_EMAIL]
 #         password = entry.data[CONF_PASSWORD]
 
-#         LOGGER.debug(f'Migrate Whistle config entry unique id to {email}')
+#         LOGGER.debug(f'Migrate config entry unique id to {email}')
 #         entry.version = 3
 
 #         hass.config_entries.async_update_entry(

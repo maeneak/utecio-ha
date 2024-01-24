@@ -1,4 +1,4 @@
-"""Config Flow for Whistle integration."""
+"""Config Flow for Ultraloq Bluetooth integration."""
 from __future__ import annotations
 
 from collections.abc import Mapping
