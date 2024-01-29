@@ -1,7 +1,7 @@
 """Ultraloq Bluetooth Component."""
 from __future__ import annotations
 
-from utecio.client import UtecClient
+from utecio.api import UtecClient
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
@@ -25,7 +25,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.data[CONF_PASSWORD],
         session=async_get_clientsession(hass),
     )
-    devices = await client.get_all_devices()
+    devices = await client.get_ble_devices()
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {UTEC_LOCKDATA: devices}
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

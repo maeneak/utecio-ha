@@ -1,11 +1,20 @@
 """Lock platform for Ultraloq integration."""
 from __future__ import annotations
+import asyncio
+import logging
 
 from typing import Any
 from datetime import timedelta
 
 from bleak.backends.device import BLEDevice
-from utecio.lock import UtecBleLock
+from bleak_retry_connector import (
+    BleakDeviceNotFoundError,
+    BleakError,
+    BleakDBusError,
+    BleakNotFoundError,
+)
+from utecio.ble import UtecBleLock
+from utecio import logger as uteclogger
 
 from homeassistant.components import bluetooth
 from homeassistant.components.lock import LockEntity
@@ -49,20 +58,21 @@ class UtecLock(LockEntity):
         super().__init__()
         self.lock: UtecBleLock = lock
         self._attr_is_locked = True
-        self.lock.async_device_callback = self.async_device_callback
+        # self.lock.async_device_callback = self.async_device_callback
         self.scaninterval = scan_interval
         self.update_track = None
+        uteclogger.setLevel(logging.ERROR)
 
     @property
     def should_poll(self) -> bool:
         return False
 
-    async def async_device_callback(self, device: str) -> BLEDevice | Any:
-        """Return BLEDevice from HA bleak instance if available."""
-        ble_device = bluetooth.async_ble_device_from_address(
-            self.hass, device, connectable=True
-        )
-        return ble_device if ble_device else device
+    # async def async_device_callback(self, device: str) -> BLEDevice | Any:
+    #     """Return BLEDevice from HA bleak instance if available."""
+    #     ble_device = bluetooth.async_ble_device_from_address(
+    #         self.hass, device, connectable=True
+    #     )
+    #     return ble_device if ble_device else device
 
     # @property
     # def device_info(self) -> dict[str, Any]:
@@ -101,27 +111,64 @@ class UtecLock(LockEntity):
                 self.hass, self.scaninterval, lambda Now: self.request_update()
             )
 
+    async def async_get_ble_device(self) -> BLEDevice | None:
+        try:
+            lock_device = bluetooth.async_ble_device_from_address(
+                self.hass, self.lock.mac_uuid
+            )
+            if not lock_device and self.lock.wurx_uuid:
+                wakeup_device = bluetooth.async_ble_device_from_address(
+                    self.hass, self.lock.wurx_uuid
+                )
+                await self.lock.async_wakeup_device(wakeup_device)
+                asyncio.sleep(1)
+                lock_device = bluetooth.async_ble_device_from_address(
+                    self.hass, self.lock.mac_uuid
+                )
+        except Exception as e:
+            LOGGER.debug("(%s) could not find ble device: %s", self.name, e)
+            return None
+
+        return lock_device
+
     async def async_update(self, **kwargs):
         """Update the lock."""
         LOGGER.debug("Updating %s with scan interval: %s", self.name, self.scaninterval)
-        await self.lock.update()
+        result = False
+
+        device = await self.async_get_ble_device()
+        if device:
+            try:
+                result = await self.lock.async_update_status(device=device)
+            except BleakNotFoundError as e:
+                LOGGER.debug("(%s) could not find ble device: %s", self.name, e)
+
+        LOGGER.debug(
+            "(%s) Update %s.",
+            self.name,
+            "Successful" if result else "Failed",
+        )
 
     async def async_lock(self, **kwargs):
         """Lock the lock."""
         self._attr_is_locked = True
-        await self.lock.lock()
-        self.schedule_update_ha_state(force_refresh=False)
+        device = await self.async_get_ble_device()
+        if device:
+            await self.lock.lock()
+            self.schedule_update_ha_state(force_refresh=False)
 
     async def async_unlock(self, **kwargs):
         """Unlock the lock."""
         self._attr_is_locked = False
-        await self.lock.unlock()
-        self.schedule_update_ha_state(force_refresh=False)
-        async_call_later(
-            self.hass,
-            timedelta(seconds=self.lock.autolock_time),
-            lambda Now: self._set_state_locked(),
-        )
+        device = await self.async_get_ble_device()
+        if device:
+            await self.lock.unlock()
+            self.schedule_update_ha_state(force_refresh=False)
+            async_call_later(
+                self.hass,
+                timedelta(seconds=self.lock.autolock_time),
+                lambda Now: self._set_state_locked(),
+            )
 
     def _set_state_locked(self):
         LOGGER.debug("Autolock %s", self.name)
