@@ -119,7 +119,7 @@ class UltraloqConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class UltraloqOptionsFlowHandler(config_entries.OptionsFlow):
-    """Handle Ultraloq zone options."""
+    """Handle Ultraloq options."""
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""

@@ -11,8 +11,8 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/maeneak/utecio-ha/issues",
   "requirements": [
-    "utecio @ git+https://github.com/maeneak/utecio@ha",
+    "utecio==0.1.2",
     "async-timeout>=3.0.0"
   ],
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
