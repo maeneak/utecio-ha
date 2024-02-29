@@ -1,4 +1,4 @@
-# Ultraloq BLE
+# Ultraloq Bluetooth
 
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE)
@@ -26,7 +26,7 @@ _Integration to integrate Home Assistant with [utecio][utecio]._
 1. Download _all_ the files from the `custom_components/ultraloq_ble/` directory (folder) in this repository.
 1. Place the files you downloaded in the new directory (folder) you created.
 1. Restart Home Assistant
-1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Ultraloq BLE"
+1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Ultraloq Bluetooth"
 
 ## Configuration is done in the UI
 
