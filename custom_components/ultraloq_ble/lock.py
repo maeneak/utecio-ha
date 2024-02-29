@@ -8,6 +8,7 @@ from datetime import timedelta
 from bleak.backends.device import BLEDevice
 from utecio.ble.lock import UtecBleLock
 from utecio.ble.device import UtecBleNotFoundError, UtecBleDeviceError
+from utecio.enums import DeviceBatteryLevel, DeviceLockStatus, DeviceLockWorkMode
 
 from homeassistant.components import bluetooth
 from homeassistant.components.lock import (
@@ -57,6 +58,7 @@ class UtecLock(LockEntity):
         self.scaninterval = scan_interval
         self.update_track_cancel = None
         self._cancel_unavailable_track = None
+        self._attributes = {}
         # uteclogger.setLevel(LOGGER.level)
 
     @property
@@ -69,6 +71,20 @@ class UtecLock(LockEntity):
     #     """Return device registry information for this entity."""
 
     #     return self.lock.config
+
+    @property
+    def extra_state_attributes(self):
+        """Return lock state attributes."""
+        if not self.lock:
+            return {}
+
+        return {
+            "battery_level": DeviceBatteryLevel(self.lock.battery).name,
+            "autolock_time": self.lock.autolock_time if self.lock.autolock_time else -1,
+            "lock_status": DeviceLockStatus(self.lock.lock_status).name,
+            "bolt_status": DeviceLockStatus(self.lock.bolt_status).name,
+            "lock_mode": DeviceLockWorkMode(self.lock.lock_mode).name,
+        }
 
     @property
     def unique_id(self) -> str:
@@ -177,7 +193,7 @@ class UtecLock(LockEntity):
             await self.lock.async_unlock()
             self._attr_is_locked = False
             self.schedule_update_ha_state(force_refresh=False)
-            if self.lock.capabilities.autolock:
+            if self.lock.capabilities.autolock and self.lock.autolock_time:
                 async_call_later(
                     self.hass,
                     timedelta(seconds=self.lock.autolock_time),
