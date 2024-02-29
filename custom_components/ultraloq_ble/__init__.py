@@ -1,6 +1,6 @@
 """Ultraloq Bluetooth Component."""
 from __future__ import annotations
-
+import logging
 from utecio.api import UtecClient
 
 from homeassistant.config_entries import ConfigEntry
@@ -15,6 +15,11 @@ from .const import (
     UPDATE_LISTENER,
     UTEC_LOCKDATA,
 )
+
+
+def debug_mode():
+    """Is integration in debug mode."""
+    return LOGGER.isEnabledFor(logging.DEBUG)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
